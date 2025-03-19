@@ -22,6 +22,24 @@ pipeline {
             steps {
                 sh 'mvn -s settings.xml -DskipTests install'
             }
+            post {
+                success {
+                    echo "Now Archiving."
+                    archiveArtifacts artifacts: '**/*.war' // archive anything with ends with '**/*.war'. You can see it in any job which was created successfully>console output> workspaces> click on the link and see all the data
+                }
+            }
+        }
+
+        stage('Test'){
+            steps {
+                sh 'mvn test' // this will run the unit test and will generate unit tests which will later upload to sonarQube
+            }
+        }
+
+        stage('Checkstyle Analysis'){
+            steps{
+                sh 'mvn checkstyle:checkstyle' // code analysis tool which will check any errors in the code and will suggest best practices and vulnerabilties
+            }
         }
     }
 }
