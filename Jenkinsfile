@@ -38,7 +38,7 @@ pipeline {
 
         stage('Checkstyle Analysis'){
             steps{
-                sh 'mvn checkstyle:checkstyle' // code analysis tool which will check any errors in the code and will suggest best practices and vulnerabilties
+                sh 'mvn checkstyle:checkstyle' //code analysis tool which will check any errors in the code and will suggest best practices and vulnerabilties
             }
         }
     }
