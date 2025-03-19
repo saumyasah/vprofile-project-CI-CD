@@ -15,6 +15,8 @@ pipeline {
 		NEXUSPORT = '8081'
 		NEXUS_GRP_REPO = 'vpro-maven-group'
         NEXUS_LOGIN = 'nexuslogin'
+        SONARSERVER = 'sonarserver' // new
+        SONARSCANNER = 'sonarscanner' // new
     }
 
     stages {
@@ -25,20 +27,38 @@ pipeline {
             post {
                 success {
                     echo "Now Archiving."
-                    archiveArtifacts artifacts: '**/*.war' // archive anything with ends with '**/*.war'. You can see it in any job which was created successfully>console output> workspaces> click on the link and see all the data
+                    archiveArtifacts artifacts: '**/*.war' 
                 }
             }
         }
 
         stage('Test'){
             steps {
-                sh 'mvn -s settings.xml test' // this will run the unit test and will generate unit tests which will later upload to sonarQube
+                sh 'mvn -s settings.xml test' 
             }
         }
 
         stage('Checkstyle Analysis'){
             steps{
-                sh 'mvn -s settings.xml checkstyle:checkstyle' // code analysis tool which will check any errors in the code and will suggest best practices and vulnerabilties
+                sh 'mvn -s settings.xml checkstyle:checkstyle' 
+            }
+        }
+
+        stage('Sonar Analysis'){ // new
+            environment {
+                scannerHome = tool "${SONARSCANNER}"
+            }
+            steps {
+                withSonarQubeEnv("${SONARSERVER}") {
+                    sh '''${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=vprofile \ 
+                    -Dsonar.projectName=vprofile \
+                    -Dsonar.projectVersion=1.0 \
+                    -Dsonar.sources=src/ \
+                    -Dsonar.java.binaries=target/test-classes/com/visualpathit/account/controllerTest/ \
+                    -Dsonar.junit.reportsPath=target/surefire-reports/ \
+                    -Dsonar.jacoco.reportsPath=target/jacoco.exec \
+                    -Dsonar.java.checkstyle.reportPaths=target/checkstyle-result.xml'''
+                }
             }
         }
     }
