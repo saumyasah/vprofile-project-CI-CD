@@ -32,13 +32,13 @@ pipeline {
 
         stage('Test'){
             steps {
-                sh 'mvn test' // this will run the unit test and will generate unit tests which will later upload to sonarQube
+                sh 'mvn -s settings.xml test' // this will run the unit test and will generate unit tests which will later upload to sonarQube
             }
         }
 
         stage('Checkstyle Analysis'){
             steps{
-                sh 'mvn checkstyle:checkstyle' // code analysis tool which will check any errors in the code and will suggest best practices and vulnerabilties
+                sh 'mvn -s settings.xml checkstyle:checkstyle' // code analysis tool which will check any errors in the code and will suggest best practices and vulnerabilties
             }
         }
     }
