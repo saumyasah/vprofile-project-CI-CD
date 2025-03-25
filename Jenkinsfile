@@ -73,14 +73,11 @@ pipeline {
         }
 
         stage('Upload Artifact'){
-            steps{   script {
-                    withCredentials([usernamePassword(credentialsId: "${NEXUS_LOGIN}", 
-                                                     usernameVariable: "${NEXUS_USER}", 
-                                                     passwordVariable: "${NEXUS_PASS}")]) {
+            steps{   
                 nexusArtifactUploader(
                     nexusVersion: 'nexus3',
                     protocol: 'http',
-                    nexusUrl: "${NEXUSIP}:${NEXUSPORT}:",
+                    nexusUrl: "${NEXUSIP}:${NEXUSPORT}",
                     groupId: 'QA',
                     version: "${env.BUILD_ID}-${env.BUILD_TIMESTAMP}",
                     repository: "${RELEASE_REPO}",
@@ -96,5 +93,5 @@ pipeline {
         }
     }
 }
-}
-}
+//}
+//}
